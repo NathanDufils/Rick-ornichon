@@ -1,15 +1,21 @@
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import javax.sound.sampled.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 
 public class ImgToSound extends Application {
 
@@ -17,134 +23,119 @@ public class ImgToSound extends Application {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
-    private static final int SAMPLE_RATE = 44100;  // Fréquence d'échantillonnage (Hz)
-    private static final int DURATION_PER_COLUMN = SAMPLE_RATE / 64;
-    private static final int FREQ_MIN = 200;
-    private static final int FREQ_MAX = 15000;
+    private static final String IMAGE_PATH = "Pictures/daftpunk.jpg";
+    Mat originalImage = Imgcodecs.imread(IMAGE_PATH);
 
     @Override
     public void start(Stage primaryStage) {
-        // Chemin de l'image
-        String imagePath = "Pictures/shapes.png";
-
-        // Charger et traiter l'image
-        Mat originalImage = Imgcodecs.imread(imagePath);
-        if (originalImage.empty()) {
-            System.err.println("Impossible de charger l'image : " + imagePath);
-            return;
-        }
-
         Mat processedImage = processImage(originalImage);
+        Image image = convertMatToImage(processedImage);
 
-        // Afficher l'image dans une fenêtre JavaFX
-        ImageView imageView = new ImageView(SwingFXUtils.toFXImage(matToBufferedImage(processedImage), null));
+        ImageView imageView = new ImageView(image);
+        imageView.setPreserveRatio(true);
+
         StackPane root = new StackPane(imageView);
+        Scene scene = new Scene(root, 1000, 1000);
 
-        Scene scene = new Scene(root, 400, 400);
-        primaryStage.setTitle("Image Traité - 64x64");
+        primaryStage.setTitle("ImgToSound");
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        // Boucle infinie pour rejouer le son
-        new Thread(() -> {
-            while (true) {
-                // Générer le son pour chaque colonne
-                byte[] soundData = generateSound(processedImage);
-
-                // Jouer le son
-                playSound(soundData);
-
-                // Pause de 1 seconde
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    System.err.println("Erreur pendant l'attente : " + e.getMessage());
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-            }
-        }).start();
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> playSoundFromImage(processedImage)));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
     }
 
     private Mat processImage(Mat image) {
         Mat grayImage = new Mat();
-        Mat resizedImage = new Mat();
-
-        // Convertir en niveaux de gris
         Imgproc.cvtColor(image, grayImage, Imgproc.COLOR_BGR2GRAY);
 
-        // Redimensionner à 64x64
+        Mat resizedImage = new Mat();
         Imgproc.resize(grayImage, resizedImage, new Size(64, 64));
 
-        // Réduction des niveaux de gris à 16 niveaux (0 à 15)
-        Core.divide(resizedImage, new Scalar(16), resizedImage);
-        return resizedImage;
+        Mat quantizedImage = new Mat(resizedImage.size(), CvType.CV_8U);
+        for (int y = 0; y < resizedImage.rows(); y++) {
+            for (int x = 0; x < resizedImage.cols(); x++) {
+                double[] pixel = resizedImage.get(y, x);
+                double grayValue = pixel[0]; // Valeur de niveau de gris (0-255)
+                int quantizedValue = (int) (grayValue / 16) * 16; // Réduction à 16 niveaux
+                quantizedImage.put(y, x, quantizedValue);
+            }
+        }
+
+        return quantizedImage;
     }
 
-    private byte[] generateSound(Mat image) {
-        int width = image.cols();
-        int height = image.rows();
+    private Image convertMatToImage(Mat mat) {
+        BufferedImage bufferedImage = new BufferedImage(mat.cols(), mat.rows(), BufferedImage.TYPE_BYTE_GRAY);
+        for (int y = 0; y < mat.rows(); y++) {
+            for (int x = 0; x < mat.cols(); x++) {
+                int gray = (int) mat.get(y, x)[0];
+                int pixel = (gray << 16) | (gray << 8) | gray;
+                bufferedImage.setRGB(x, y, pixel);
+            }
+        }
+        return SwingFXUtils.toFXImage(bufferedImage, null);
+    }
 
-        byte[] soundData = new byte[width * DURATION_PER_COLUMN];
-        double[] frequencies = generateFrequencies(height);
+    private void playSoundFromImage(Mat image) {
+        try {
+            float sampleRate = 44100;
+            int durationPerColumn = (int) (sampleRate / 64); // Durée d'une colonne en échantillons
+            byte[] finalBuffer = new byte[64 * durationPerColumn];
+            double minFreq = 0;
+            double maxFreq = 1500;
 
-        for (int col = 0; col < width; col++) {
-            double[] columnSound = new double[DURATION_PER_COLUMN];
+            for (int x = 0; x < image.cols(); x++) {
+                double[] columnWave = new double[durationPerColumn];
 
-            for (int row = 0; row < height; row++) {
-                double grayLevel = image.get(row, col)[0];
-                if (grayLevel == 0) continue;
+                // Fenêtre de Hanning pour une transition plus douce
+                double[] window = new double[durationPerColumn];
+                for (int i = 0; i < durationPerColumn; i++) {
+                    window[i] = 0.5 * (1 - Math.cos(2 * Math.PI * i / (durationPerColumn - 1)));
+                }
 
-                double amplitude = grayLevel / 15.0; // Normaliser entre 0 et 1
-                double frequency = frequencies[row];
+                for (int y = 0; y < image.rows(); y++) {
+                    int grayLevel = (int) image.get(y, x)[0] / 16; // Niveau de gris réduit (0-15)
+                    if (grayLevel == 0) continue; // Ignore les pixels noirs
 
-                for (int t = 0; t < DURATION_PER_COLUMN; t++) {
-                    double time = (double) t / SAMPLE_RATE;
-                    columnSound[t] += amplitude * Math.sin(2 * Math.PI * frequency * time);
+                    double frequency = minFreq + ((maxFreq - minFreq) / 64) * y;
+                    for (int i = 0; i < durationPerColumn; i++) {
+                        double time = i / sampleRate;
+                        columnWave[i] += Math.sin(2 * Math.PI * frequency * time) * (grayLevel / 15.0) * window[i];
+                    }
+                }
+
+                // Normalisation et copie dans le buffer final
+                for (int i = 0; i < durationPerColumn; i++) {
+                    finalBuffer[x * durationPerColumn + i] = (byte) (Math.min(Math.max(columnWave[i], -1.0), 1.0) * 127);
                 }
             }
 
-            // Convertir en échantillons audio
-            for (int t = 0; t < DURATION_PER_COLUMN; t++) {
-                int sampleIndex = col * DURATION_PER_COLUMN + t;
-                soundData[sampleIndex] = (byte) (Math.min(127, Math.max(-128, columnSound[t] * 127)));
+            // Configurer le format audio
+            AudioFormat format = new AudioFormat(sampleRate, 8, 1, true, true);
+
+            // Enregistrer le son dans un fichier WAV
+            File wavFile = new File("output.wav");
+            try (AudioInputStream audioStream = new AudioInputStream(
+                    new ByteArrayInputStream(finalBuffer),
+                    format,
+                    finalBuffer.length)) {
+                AudioSystem.write(audioStream, AudioFileFormat.Type.WAVE, wavFile);
             }
-        }
 
-        return soundData;
-    }
-
-    private double[] generateFrequencies(int size) {
-        double[] frequencies = new double[size];
-        double step = (FREQ_MAX - FREQ_MIN) / (double) size;
-
-        for (int i = 0; i < size; i++) {
-            frequencies[i] = FREQ_MIN + i * step;
-        }
-
-        return frequencies;
-    }
-
-    private void playSound(byte[] soundData) {
-        try {
-            AudioFormat format = new AudioFormat(SAMPLE_RATE, 8, 1, true, true);
+            // Lire le son généré (optionnel)
             SourceDataLine line = AudioSystem.getSourceDataLine(format);
-
             line.open(format);
             line.start();
-            line.write(soundData, 0, soundData.length);
+            line.write(finalBuffer, 0, finalBuffer.length);
             line.drain();
             line.close();
-        } catch (LineUnavailableException e) {
+
+            System.out.println("Son enregistré sous : " + wavFile.getAbsolutePath());
+        } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private BufferedImage matToBufferedImage(Mat mat) {
-        int type = (mat.channels() > 1) ? BufferedImage.TYPE_3BYTE_BGR : BufferedImage.TYPE_BYTE_GRAY;
-        BufferedImage image = new BufferedImage(mat.cols(), mat.rows(), type);
-        mat.get(0, 0, ((java.awt.image.DataBufferByte) image.getRaster().getDataBuffer()).getData());
-        return image;
     }
 
     public static void main(String[] args) {
