@@ -1,0 +1,15 @@
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+deleted file mode 100644
+--- a/.idea/vcs.xml	(revision 678e7e438c21b4e8cc767b4022cef7691056a2ed)
++++ /dev/null	(revision 678e7e438c21b4e8cc767b4022cef7691056a2ed)
+@@ -1,4 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="VcsDirectoryMappings" defaultProject="true" />
+-</project>
+\ No newline at end of file
