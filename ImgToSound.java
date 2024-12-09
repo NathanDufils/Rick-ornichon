@@ -5,95 +5,52 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import javax.sound.sampled.*;
-import java.util.ArrayList;
-
-public class ImageResizeApp {
+import java.io.*;
+public class ImgToSound {
 
     // Chargement de la bibliothèque OpenCV
     static {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
-    public static byte[] generateContinuousTones(Double[] frequencies, int durationPerToneMillis, int sampleRate) {
-        int totalDurationInSamples = (int) ((frequencies.length * durationPerToneMillis / 1000.0) * sampleRate);
-        byte[] samples = new byte[totalDurationInSamples];
 
-        double amplitude = 127; // Amplitude du signal (max 127 pour un signal audio 8 bits)
-
-        for (int toneIndex = 0; toneIndex < frequencies.length; toneIndex++) {
-            double frequency = frequencies[toneIndex];
-            if (frequency < 20 || frequency > 20000) {
-                frequency = 440; // Par défaut, utilisez un La (440 Hz) si fréquence hors limites
-            }
-
-            int toneStartSample = toneIndex * (int) ((durationPerToneMillis / 1000.0) * sampleRate);
-
-            for (int i = 0; i < (durationPerToneMillis / 1000.0) * sampleRate; i++) {
-                double time = i / (double) sampleRate;
-                int sampleIndex = toneStartSample + i;
-
-                if (sampleIndex >= samples.length) break; // Éviter les débordements
-                samples[sampleIndex] += (byte) (amplitude * Math.sin(2 * Math.PI * frequency * time));
-            }
-        }
-
-        // Normaliser pour éviter le clipping
-        for (int i = 0; i < samples.length; i++) {
-            samples[i] = (byte) Math.max(Math.min(samples[i], amplitude), -amplitude);
-        }
-
-        return samples;
-    }
-
-
-    public static void playSound(byte[] soundData, int sampleRate) {
+    public static void generateWavFile(String filePath, Double[] frequencies, int durationMs) {
+        int SAMPLE_RATE = 44100; // Taux d'échantillonnage audio standard (44,1 kHz)
         try {
-            // Créer un format audio
-            AudioFormat format = new AudioFormat(sampleRate, 8, 1, true, true); // 8 bits, mono, signed, big-endian
-            DataLine.Info info = new DataLine.Info(Clip.class, format);
+            // Créer un flux de sortie pour stocker les données audio
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-            // Obtenir un clip audio
-            Clip clip = (Clip) AudioSystem.getLine(info);
-            clip.open(format, soundData, 0, soundData.length);
-
-            // Jouer le clip
-            clip.start();
-            clip.drain();
-            clip.close();
-        } catch (LineUnavailableException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void playMultipleFrequencies(Double[] frequencies, int durationMs) {
-        float sampleRate = 44100; // Taux d'échantillonnage audio standard (44.1 kHz)
-        try {
-            // Configuration du format audio
-            AudioFormat audioFormat = new AudioFormat(sampleRate, 8, 1, true, true);
-            DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-
-            // Ouvrir une seule fois la ligne audio
-            SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
-            line.open(audioFormat);
-            line.start();
-
-            // Parcourir les fréquences et générer le son
             for (double frequency : frequencies) {
-                // Générer le buffer pour cette fréquence
-                int bufferSize = (int) (durationMs * sampleRate / 1000);
+                // Calcul de la taille du buffer pour chaque fréquence
+                int bufferSize = (int) (durationMs * SAMPLE_RATE / 1000);
                 byte[] buffer = new byte[bufferSize];
+
+                // Génération de l'onde sinusoïdale
                 for (int i = 0; i < buffer.length; i++) {
-                    double angle = 2.0 * Math.PI * i / (sampleRate / frequency);
+                    double angle = 2.0 * Math.PI * i / (SAMPLE_RATE / frequency);
                     buffer[i] = (byte) (Math.sin(angle) * 127);
                 }
-                // Écrire le buffer dans la ligne audio
-                line.write(buffer, 0, buffer.length);
+
+                // Ajouter le buffer au flux
+                byteArrayOutputStream.write(buffer);
             }
 
-            // Terminer et fermer la ligne audio
-            line.drain();
-            line.close();
-        } catch (LineUnavailableException e) {
+            // Obtenir toutes les données générées
+            byte[] audioData = byteArrayOutputStream.toByteArray();
+
+            // Créer un format audio
+            AudioFormat audioFormat = new AudioFormat(SAMPLE_RATE, 8, 1, true, true);
+
+            // Créer un flux audio encapsulant les données générées
+            ByteArrayInputStream bais = new ByteArrayInputStream(audioData);
+            AudioInputStream audioInputStream = new AudioInputStream(bais, audioFormat, audioData.length);
+
+            // Écrire le fichier WAV
+            AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, new File(filePath));
+
+            System.out.println("Fichier WAV généré : " + filePath);
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -131,6 +88,6 @@ public class ImageResizeApp {
 
         // Générer une onde continue pour toutes les fréquences
         int durationPerToneMillis = 15; // Durée de chaque tonalité en millisecondes
-        playMultipleFrequencies(frequenceTab, durationPerToneMillis);
+        generateWavFile("output.wav", frequenceTab, durationPerToneMillis);
     }
 }
