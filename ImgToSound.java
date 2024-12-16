@@ -83,7 +83,6 @@ public class ImgToSound {
                 frequency += (pixelData[0] & 0xFF) * Math.sin(2*Math.PI*((double) rowIdx /64)*((double) (col + 1) /(resizedImage.cols())));
             }
             frequenceTab[col] = frequency;
-            System.out.println(frequency);
         }
 
         // Générer une onde continue pour toutes les fréquences
