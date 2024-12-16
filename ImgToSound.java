@@ -5,88 +5,81 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import javax.sound.sampled.*;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+
 public class ImgToSound {
-
-    // Chargement de la bibliothèque OpenCV
-    static {
+    public static void main(String[] args) {
+        // Charger la bibliothèque OpenCV
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-    }
 
+        // Charger l'image en niveaux de gris
+        String imagePath = "Pictures/shapes.png"; // Remplacez par le chemin de votre image
+        Mat image = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_GRAYSCALE);
 
-    public static void generateWavFile(String filePath, Double[] frequencies, int durationMs) {
-        int SAMPLE_RATE = 44100; // Taux d'échantillonnage audio standard (44,1 kHz)
-        try {
-            // Créer un flux de sortie pour stocker les données audio
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        // Redimensionner l'image à 64x64
+        Mat resizedImage = new Mat();
+        Imgproc.resize(image, resizedImage, new Size(64, 64));
 
-            for (double frequency : frequencies) {
-                // Calcul de la taille du buffer pour chaque fréquence
-                int bufferSize = (int) (durationMs * SAMPLE_RATE / 1000);
-                byte[] buffer = new byte[bufferSize];
+        // Définir les paramètres
+        int N = 64; // Taille de l'image (64x64)
+        double f0 = 2000.0; // Fréquence de base en Hz
+        double samplingRate = 44100; // Taux d'échantillonnage standard pour le son
+        double durationPerColumn = 1.0 / N; // Durée pour chaque colonne
+        int samplesPerColumn = (int) (samplingRate * durationPerColumn);
 
-                // Génération de l'onde sinusoïdale
-                for (int i = 0; i < buffer.length; i++) {
-                    double angle = 2.0 * Math.PI * i / (SAMPLE_RATE / frequency);
-                    buffer[i] = (byte) (Math.sin(angle) * 127);
+        // Signal audio final
+        byte[] audioData = new byte[N * samplesPerColumn * 2]; // Signal PCM 16 bits
+        int sampleIndex = 0;
+
+        // Parcourir chaque colonne
+        for (int col = 0; col < N; col++) {
+            // Récupérer les niveaux de gris pour la colonne
+            double[] grayLevels = new double[N];
+            boolean hasSignal = false;
+
+            for (int row = 0; row < N; row++) {
+                grayLevels[row] = resizedImage.get(row, col)[0];
+                if (grayLevels[row] > 0) {
+                    hasSignal = true;
                 }
-
-                // Ajouter le buffer au flux
-                byteArrayOutputStream.write(buffer);
             }
 
-            // Obtenir toutes les données générées
-            byte[] audioData = byteArrayOutputStream.toByteArray();
+            // Ignorer les colonnes noires (sans signal)
+            if (!hasSignal) {
+                sampleIndex += samplesPerColumn * 2; // Ajouter des silences
+                continue;
+            }
 
-            // Créer un format audio
-            AudioFormat audioFormat = new AudioFormat(SAMPLE_RATE, 8, 1, true, true);
+            // Générer le signal pour cette colonne
+            for (int sample = 0; sample < samplesPerColumn; sample++) {
+                double t = sample / samplingRate;
+                double s = 0;
 
-            // Créer un flux audio encapsulant les données générées
+                for (int i = 0; i < N; i++) {
+                    double fi = f0 * (i + 1); // Fréquence actuelle
+                    s += grayLevels[i] * Math.sin(2 * Math.PI * fi * t) * 5;
+                }
+
+                System.out.println("le S: "+s);
+                // Normaliser et convertir en 16 bits PCM
+                short pcmValue = (short) Math.max(-32768, Math.min(32767, s));
+                audioData[sampleIndex++] = (byte) (pcmValue & 0xff);
+                audioData[sampleIndex++] = (byte) ((pcmValue >> 8) & 0xff);
+            }
+        }
+
+        // Écrire les données audio dans un fichier WAV
+        try {
+            AudioFormat format = new AudioFormat((float) samplingRate, 16, 1, true, false);
             ByteArrayInputStream bais = new ByteArrayInputStream(audioData);
-            AudioInputStream audioInputStream = new AudioInputStream(bais, audioFormat, audioData.length);
-
-            // Écrire le fichier WAV
-            AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, new File(filePath));
-
-            System.out.println("Fichier WAV généré : " + filePath);
-
+            AudioInputStream audioInputStream = new AudioInputStream(bais, format, audioData.length / 2);
+            File outputFile = new File("output.wav");
+            AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, outputFile);
+            System.out.println("Fichier audio créé : output.wav");
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        String imagePath = "Pictures/shapes.png"; // Remplacez par le chemin de votre image
-        Mat image = Imgcodecs.imread(imagePath);
-        Double[] frequenceTab = new Double[64];
-
-        if (image.empty()) {
-            System.out.println("Erreur lors du chargement de l'image.");
-            return;
-        }
-
-        // Convertir l'image en niveaux de gris
-        Mat grayscaleImage = new Mat();
-        Imgproc.cvtColor(image, grayscaleImage, Imgproc.COLOR_BGR2GRAY);
-
-        Mat resizedImage = new Mat();
-        Imgproc.resize(grayscaleImage, resizedImage, new Size(64, 64));
-
-        // Calculer les fréquences basées sur les niveaux de gris
-        for (int col = 0; col < resizedImage.cols(); col++) {
-            System.out.print("Colonne " + (col + 1) + ": ");
-            double frequency = 0;
-            // Parcourir chaque pixel de la colonne du bas vers le haut
-            for (int rowIdx = resizedImage.rows() - 1; rowIdx >= 0; rowIdx--) {
-                byte[] pixelData = new byte[1];
-                resizedImage.get(rowIdx, col, pixelData);
-                frequency += (pixelData[0] & 0xFF) * Math.sin(2*Math.PI*((double) rowIdx /64)*((double) (col + 1) /(resizedImage.cols())));
-            }
-            frequenceTab[col] = frequency;
-        }
-
-        // Générer une onde continue pour toutes les fréquences
-        int durationPerToneMillis = 15; // Durée de chaque tonalité en millisecondes
-        generateWavFile("output.wav", frequenceTab, durationPerToneMillis);
     }
 }
