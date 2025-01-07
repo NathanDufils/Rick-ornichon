@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3cbfee06-e110-495a-aede-0f904490f97a" name="Changes" comment="Chargement de vidéos">
+    <list default="true" id="3cbfee06-e110-495a-aede-0f904490f97a" name="Changes" comment="Fix">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/InterfaceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/InterfaceController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/audio/output.wav" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/audio/output.wav" afterDir="false" />
@@ -161,7 +161,7 @@
       <workItem from="1736198142697" duration="954000" />
       <workItem from="1736199159661" duration="8881000" />
       <workItem from="1736210012491" duration="6296000" />
-      <workItem from="1736243920872" duration="294000" />
+      <workItem from="1736243920872" duration="962000" />
     </task>
     <task id="LOCAL-00001" summary="initialisation commit">
       <option name="closed" value="true" />
@@ -203,7 +203,15 @@
       <option name="project" value="LOCAL" />
       <updated>1736242252133</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Fix">
+      <option name="closed" value="true" />
+      <created>1736244236944</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1736244236944</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -226,6 +234,7 @@
     <MESSAGE value="Lecture d'un son à partir d'une image + interactions" />
     <MESSAGE value="Chargement de plusieurs images + sélection libre + extraction frames de vidéo" />
     <MESSAGE value="Chargement de vidéos" />
-    <option name="LAST_COMMIT_MESSAGE" value="Chargement de vidéos" />
+    <MESSAGE value="Fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix" />
   </component>
 </project>

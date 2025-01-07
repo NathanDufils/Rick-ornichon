@@ -44,7 +44,7 @@ public class InterfaceController {
 
         this.statusLabel = new Label("État : Inactif");
 
-        this.frequencySlider = new Slider(500, 5000, 2000);
+        this.frequencySlider = new Slider(500, 5000, baseFrequency);
         this.frequencyInput = new TextField(String.valueOf((int) baseFrequency));
 
         this.traitementImage = new TraitementImage();
@@ -61,7 +61,6 @@ public class InterfaceController {
         this.thumbnailScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         this.thumbnailScrollPane.setPrefHeight(120);
 
-        // Configurer le curseur
         frequencySlider.setShowTickLabels(true);
         frequencySlider.setShowTickMarks(true);
         frequencySlider.setMajorTickUnit(500);
@@ -142,7 +141,7 @@ public class InterfaceController {
             }
 
             if (!imagePaths.isEmpty()) {
-                selectedFilePath = imagePaths.get(0);
+                selectedFilePath = imagePaths.getFirst();
                 imageView.setImage(new Image("file:" + selectedFilePath));
                 statusLabel.setText("État : Prêt");
             }
@@ -157,13 +156,6 @@ public class InterfaceController {
     private void handleVideoFile(String filePath) {
         // Clear the exported_frames directory
         File framesDir = new File("exported_frames");
-        if (framesDir.exists()) {
-            for (File file : framesDir.listFiles()) {
-                file.delete();
-            }
-        } else {
-            framesDir.mkdir();
-        }
 
         VideoFrameExtractor.extractFrames(filePath, "exported_frames");
 
@@ -199,7 +191,7 @@ public class InterfaceController {
         if (playbackThread != null && playbackThread.isAlive()) {
             return;
         }
-        restartCycleFromCurrentIndex();
+        cycleFromCurrentIndex();
     }
 
     private void pauseAudio() {
@@ -249,7 +241,7 @@ public class InterfaceController {
         }
     }
 
-    private void restartCycleFromCurrentIndex() {
+    private void cycleFromCurrentIndex() {
         playbackThread = new Thread(() -> {
             try {
                 while (true) {
@@ -261,6 +253,7 @@ public class InterfaceController {
                     Platform.runLater(() -> {
                         imageView.setImage(new Image("file:" + currentFilePath));
                         statusLabel.setText("État : Lecture - Image " + (currentImageIndex + 1));
+                        highlightCurrentThumbnail();
                     });
 
                     traitementImage.transformerEtGenererAudio(currentFilePath, baseFrequency);
@@ -281,5 +274,16 @@ public class InterfaceController {
             }
         });
         playbackThread.start();
+    }
+
+    private void highlightCurrentThumbnail() {
+        for (int i = 0; i < thumbnailBox.getChildren().size(); i++) {
+            ImageView thumbnail = (ImageView) thumbnailBox.getChildren().get(i);
+            if (i == currentImageIndex) {
+                thumbnail.setStyle("-fx-border-color: red; -fx-border-width: 3px;");
+            } else {
+                thumbnail.setStyle(""); // Reset style for other thumbnails
+            }
+        }
     }
 }
