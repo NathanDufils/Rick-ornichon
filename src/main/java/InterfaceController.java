@@ -282,7 +282,7 @@ public class InterfaceController {
             if (i == currentImageIndex) {
                 thumbnail.setStyle("-fx-border-color: red; -fx-border-width: 3px;");
             } else {
-                thumbnail.setStyle(""); // Reset style for other thumbnails
+                thumbnail.setStyle("");
             }
         }
     }
