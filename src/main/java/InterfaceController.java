@@ -1,5 +1,6 @@
 package main.java;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -18,12 +19,13 @@ import javafx.stage.Stage;
 
 import javax.sound.sampled.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InterfaceController {
 
     private final ImageView imageView;
     private Clip audioClip;
-    private boolean isPaused = false;
     private final Label statusLabel;
     private final Slider frequencySlider;
     private final TextField frequencyInput;
@@ -31,11 +33,16 @@ public class InterfaceController {
     private final TraitementImage traitementImage;
     private String selectedFilePath;
 
+    private final HBox thumbnailBox;
+    private final List<String> imagePaths;
+    private int currentImageIndex = 0;
+    private Thread playbackThread;
+
     public InterfaceController() {
         this.imageView = new ImageView();
         this.imageView.setPreserveRatio(true);
-        this.imageView.setFitWidth(400);
-        this.imageView.setFitHeight(400);
+        this.imageView.setFitHeight(200);
+        this.imageView.setFitWidth(-1);
 
         this.statusLabel = new Label("État : Inactif");
 
@@ -44,6 +51,11 @@ public class InterfaceController {
 
         this.traitementImage = new TraitementImage();
         this.selectedFilePath = null;
+
+        this.thumbnailBox = new HBox(10);
+        this.thumbnailBox.setAlignment(Pos.CENTER);
+        this.thumbnailBox.setPadding(new Insets(10));
+        this.imagePaths = new ArrayList<>();
 
         // Configurer le curseur
         frequencySlider.setShowTickLabels(true);
@@ -61,32 +73,43 @@ public class InterfaceController {
     }
 
     public Scene createInterface(Stage primaryStage) {
+        // Buttons
         Button loadImageButton = new Button("Charger un Fichier");
         Button playButton = new Button("Lire");
         Button pauseButton = new Button("Pause");
         Button resumeButton = new Button("Reprendre");
 
+        // Top section for file loading
         VBox topBox = new VBox(loadImageButton);
         topBox.setAlignment(Pos.CENTER);
 
+        // Control buttons
         HBox controlsBox = new HBox(10, playButton, pauseButton, resumeButton);
         controlsBox.setAlignment(Pos.CENTER);
 
+        // Frequency controls
         HBox frequencyBox = new HBox(10, new Label("Fréquence : "), frequencyInput, frequencySlider);
         frequencyBox.setAlignment(Pos.CENTER);
 
+        // Combine controls and status into infoBox
         VBox infoBox = new VBox(10, controlsBox, frequencyBox, statusLabel);
         infoBox.setAlignment(Pos.CENTER);
 
+        // Combine infoBox and thumbnailBox
+        VBox bottomBox = new VBox(10, thumbnailBox, infoBox);
+        bottomBox.setAlignment(Pos.CENTER);
+
+        // Button actions
         loadImageButton.setOnAction(e -> loadFile(primaryStage));
         playButton.setOnAction(e -> playAudio());
         pauseButton.setOnAction(e -> pauseAudio());
         resumeButton.setOnAction(e -> resumeAudio());
 
+        // Layout setup
         BorderPane root = new BorderPane();
         root.setTop(topBox);
         root.setCenter(new StackPane(imageView));
-        root.setBottom(infoBox);
+        root.setBottom(bottomBox);
         root.setPadding(new Insets(15));
 
         return new Scene(root, 800, 600);
@@ -96,54 +119,63 @@ public class InterfaceController {
         stopCurrentAudio();
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Sélectionner un Fichier");
+        fileChooser.setTitle("Sélectionner des Fichiers");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg")
         );
 
-        fileChooser.setInitialDirectory(new File("src/main/resources/images"));
+        fileChooser.setInitialDirectory(new File("src/main/resources"));
 
-        File selectedFile = fileChooser.showOpenDialog(stage);
-        if (selectedFile != null) {
-            selectedFilePath = selectedFile.getAbsolutePath();
-            Image image = new Image("file:" + selectedFilePath);
-            imageView.setImage(image);
-            statusLabel.setText("État : Prêt");
+        List<File> selectedFiles = fileChooser.showOpenMultipleDialog(stage);
+        if (selectedFiles != null) {
+            imagePaths.clear();
+            thumbnailBox.getChildren().clear();
+
+            for (int index = 0; index < selectedFiles.size(); index++) {
+                File file = selectedFiles.get(index);
+                imagePaths.add(file.getAbsolutePath());
+
+                Image thumbnail = new Image("file:" + file.getAbsolutePath(), 100, 100, true, true);
+                ImageView thumbnailView = new ImageView(thumbnail);
+
+                int finalIndex = index;
+                thumbnailView.setOnMouseClicked(e -> {
+                    currentImageIndex = finalIndex;
+                    selectedFilePath = imagePaths.get(currentImageIndex);
+                    imageView.setImage(new Image("file:" + selectedFilePath));
+                    statusLabel.setText("État : Image sélectionnée");
+                });
+
+                thumbnailBox.getChildren().add(thumbnailView);
+            }
+
+            if (!imagePaths.isEmpty()) {
+                currentImageIndex = 0;
+                selectedFilePath = imagePaths.get(currentImageIndex);
+                imageView.setImage(new Image("file:" + selectedFilePath));
+                statusLabel.setText("État : Prêt");
+            }
         }
     }
 
     private void playAudio() {
-        if (selectedFilePath == null) {
-            statusLabel.setText("État : Aucun fichier sélectionné !");
+        if (playbackThread != null && playbackThread.isAlive()) {
             return;
         }
-
-        stopCurrentAudio();
-
-        traitementImage.transformerEtGenererAudio(selectedFilePath, baseFrequency);
-        loadAudioClip();
-
-        if (audioClip != null) {
-            audioClip.setFramePosition(0);
-            audioClip.loop(Clip.LOOP_CONTINUOUSLY);
-            statusLabel.setText("État : Lecture");
-        }
+        cycleThroughImages();
     }
 
     private void pauseAudio() {
-        if (audioClip != null && audioClip.isRunning()) {
-            audioClip.stop();
-            isPaused = true;
+        if (playbackThread != null) {
+            playbackThread.interrupt();
+            playbackThread = null;
             statusLabel.setText("État : Pause");
         }
     }
 
     private void resumeAudio() {
-        if (audioClip != null && isPaused) {
-            audioClip.start();
-            audioClip.loop(Clip.LOOP_CONTINUOUSLY);
-            isPaused = false;
-            statusLabel.setText("État : Lecture");
+        if (playbackThread == null) {
+            playAudio();
         }
     }
 
@@ -164,7 +196,6 @@ public class InterfaceController {
             audioClip.close();
         }
         audioClip = null;
-        isPaused = false;
     }
 
     private void updateFrequencyFromInput() {
@@ -179,5 +210,42 @@ public class InterfaceController {
         } catch (NumberFormatException e) {
             frequencyInput.setText(String.valueOf((int) baseFrequency)); // Rétablir la valeur précédente
         }
+    }
+
+    private void cycleThroughImages() {
+        if (imagePaths.isEmpty()) {
+            statusLabel.setText("État : Aucun fichier sélectionné !");
+            return;
+        }
+
+        stopCurrentAudio();
+
+        playbackThread = new Thread(() -> {
+            try {
+                while (true) {
+                    selectedFilePath = imagePaths.get(currentImageIndex);
+
+                    Platform.runLater(() -> {
+                        imageView.setImage(new Image("file:" + selectedFilePath));
+                        statusLabel.setText("État : Lecture - Image " + (currentImageIndex + 1));
+                    });
+
+                    traitementImage.transformerEtGenererAudio(selectedFilePath, baseFrequency);
+                    loadAudioClip();
+                    if (audioClip != null) {
+                        audioClip.start();
+                        audioClip.loop(2);
+                        Thread.sleep(3000);
+                    }
+
+                    currentImageIndex = (currentImageIndex + 1) % imagePaths.size();
+                }
+            } catch (InterruptedException e) {
+                Platform.runLater(() -> {
+                    statusLabel.setText("État : Pause");
+                });
+            }
+        });
+        playbackThread.start();
     }
 }

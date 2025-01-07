@@ -48,9 +48,8 @@ public class TraitementImage {
         byte[] audioData = new byte[n * samplesPerColumn * 2];
         int sampleIndex = 0;
 
-        // Définir une plage fixe de fréquences
-        double minFrequency = f0 / 2;  // Par exemple, moitié de f0 pour le grave
-        double maxFrequency = f0 * 2; // Par exemple, double de f0 pour l'aigu
+        double minFrequency = f0 / 2;
+        double maxFrequency = f0 * 2;
         double[] frequencies = new double[n];
 
         // Calcul des fréquences selon une progression logarithmique
@@ -59,7 +58,7 @@ public class TraitementImage {
         }
 
         // Normalisation des niveaux de gris
-        double maxGrayLevel = 255.0; // Les niveaux de gris vont de 0 à 255
+        double maxGrayLevel = 255.0;
 
         for (int col = 0; col < n; col++) {
             double[] grayLevels = new double[n];
@@ -71,12 +70,11 @@ public class TraitementImage {
                 double t = sample / samplingRate;
                 double s = 0;
 
-                // Génération du son avec pondération
                 for (int i = 0; i < n; i++) {
                     s += grayLevels[i] * Math.sin(2 * Math.PI * frequencies[i] * t);
                 }
 
-                // Appliquer une amplitude globale réduite pour éviter la saturation
+                // Amplitude globale réduite pour éviter la saturation
                 s *= 5000;
 
                 // Limiter les valeurs PCM

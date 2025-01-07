@@ -4,7 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3cbfee06-e110-495a-aede-0f904490f97a" name="Changes" comment="initialisation commit" />
+    <list default="true" id="3cbfee06-e110-495a-aede-0f904490f97a" name="Changes" comment="Lecture d'un son à partir d'une image + interactions">
+      <change afterPath="$PROJECT_DIR$/src/main/java/VideoFrameExtractor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/black_white_frames/frame_0000.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/black_white_frames/frame_0001.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/black_white_frames/frame_0002.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/black_white_frames/frame_0003.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/black_white_frames/frame_0004.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/black_white_frames/frame_0005.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/black_white_frames/frame_0006.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/black_white_frames/frame_0007.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/black_white_frames/frame_0008.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/black_white_frames/frame_0009.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/black_white_frames/frame_0010.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/videos/animation_coloree.mp4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/videos/animation_noir_blanc.mp4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/InterfaceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/InterfaceController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/TraitementImage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TraitementImage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/audio/output.wav" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/audio/output.wav" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -59,11 +79,15 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Application.Test.executor": "Run",
+    "Application.VideoFrameExtractor.executor": "Run",
     "Application.VoirViaSons.executor": "Run",
     "Application.imgToMP3.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "SONARLINT_PRECOMMIT_ANALYSIS": "true",
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
@@ -92,7 +116,25 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.VoirViaSons">
+    <configuration name="VideoFrameExtractor" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="main.java.VideoFrameExtractor" />
+      <module name="Rick-ornichon" />
+      <option name="VM_PARAMETERS" value="--module-path &quot;C:\tools\javafx-sdk-23.0.1\lib&quot; -Djava.library.path=&quot;C:\tools\opencv\build\java\x64&quot; --add-modules javafx.controls" />
+      <extension name="net.ashald.envfile">
+        <option name="IS_ENABLED" value="false" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+        </ENTRIES>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="VoirViaSons" type="Application" factoryName="Application" activateToolWindowBeforeRun="false">
       <option name="ALTERNATIVE_JRE_PATH" value="21" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
@@ -113,6 +155,10 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.VoirViaSons" />
+      <item itemvalue="Application.VideoFrameExtractor" />
+    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -129,7 +175,7 @@
       <workItem from="1733494191072" duration="2000" />
       <workItem from="1733749408220" duration="2093000" />
       <workItem from="1736198142697" duration="954000" />
-      <workItem from="1736199159661" duration="724000" />
+      <workItem from="1736199159661" duration="8798000" />
     </task>
     <task id="LOCAL-00001" summary="initialisation commit">
       <option name="closed" value="true" />
@@ -147,14 +193,24 @@
       <option name="project" value="LOCAL" />
       <updated>1733145997137</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Lecture d'un son à partir d'une image + interactions">
+      <option name="closed" value="true" />
+      <created>1736200001814</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1736200001814</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="initialisation commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="initialisation commit" />
+    <MESSAGE value="Lecture d'un son à partir d'une image + interactions" />
+    <option name="LAST_COMMIT_MESSAGE" value="Lecture d'un son à partir d'une image + interactions" />
   </component>
 </project>
