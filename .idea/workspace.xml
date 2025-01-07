@@ -5,59 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3cbfee06-e110-495a-aede-0f904490f97a" name="Changes" comment="Fix">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0000.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0001.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0002.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0003.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0004.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0005.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0006.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0007.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0008.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0009.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0010.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0011.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0012.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0013.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0014.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0015.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0016.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0017.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0018.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0019.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0020.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0021.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0022.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0023.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0024.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0025.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0026.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0027.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0028.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0029.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0030.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0031.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0032.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0033.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0034.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0035.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0036.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0037.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0038.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0039.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0040.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0041.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0042.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0043.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0044.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0045.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0046.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0047.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0048.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0049.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exported_frames/frame_0050.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/InterfaceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/InterfaceController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/pente.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/audio/output.wav" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/audio/output.wav" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -211,7 +160,7 @@
       <workItem from="1736198142697" duration="954000" />
       <workItem from="1736199159661" duration="8881000" />
       <workItem from="1736210012491" duration="6296000" />
-      <workItem from="1736243920872" duration="1567000" />
+      <workItem from="1736243920872" duration="2224000" />
     </task>
     <task id="LOCAL-00001" summary="initialisation commit">
       <option name="closed" value="true" />
@@ -269,7 +218,15 @@
       <option name="project" value="LOCAL" />
       <updated>1736244910309</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Fix">
+      <option name="closed" value="true" />
+      <created>1736245662163</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1736245662163</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
