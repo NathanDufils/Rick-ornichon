@@ -79,12 +79,11 @@ public class InterfaceController {
         Button loadImageButton = new Button("Charger des fichiers");
         Button playButton = new Button("Lire");
         Button pauseButton = new Button("Pause");
-        Button resumeButton = new Button("Reprendre");
 
         VBox topBox = new VBox(loadImageButton);
         topBox.setAlignment(Pos.CENTER);
 
-        HBox controlsBox = new HBox(10, playButton, pauseButton, resumeButton);
+        HBox controlsBox = new HBox(10, playButton, pauseButton);
         controlsBox.setAlignment(Pos.CENTER);
 
         HBox frequencyBox = new HBox(10, new Label("Fréquence : "), frequencyInput, frequencySlider);
@@ -99,7 +98,6 @@ public class InterfaceController {
         loadImageButton.setOnAction(e -> loadFile(primaryStage));
         playButton.setOnAction(e -> playAudio());
         pauseButton.setOnAction(e -> pauseAudio());
-        resumeButton.setOnAction(e -> resumeAudio());
 
         BorderPane root = new BorderPane();
         root.setTop(topBox);
@@ -199,12 +197,6 @@ public class InterfaceController {
             playbackThread.interrupt();
             playbackThread = null;
             statusLabel.setText("État : Pause");
-        }
-    }
-
-    private void resumeAudio() {
-        if (playbackThread == null) {
-            playAudio();
         }
     }
 

@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3cbfee06-e110-495a-aede-0f904490f97a" name="Changes" comment="Nouvelles images">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="3cbfee06-e110-495a-aede-0f904490f97a" name="Changes" comment="Peut plus reprendre">
       <change beforePath="$PROJECT_DIR$/src/main/java/InterfaceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/InterfaceController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/audio/output.wav" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/audio/output.wav" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/videos/animation_couleur.mp4" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -161,7 +161,7 @@
       <workItem from="1736198142697" duration="954000" />
       <workItem from="1736199159661" duration="8881000" />
       <workItem from="1736210012491" duration="6296000" />
-      <workItem from="1736243920872" duration="2789000" />
+      <workItem from="1736243920872" duration="2859000" />
     </task>
     <task id="LOCAL-00001" summary="initialisation commit">
       <option name="closed" value="true" />
@@ -235,7 +235,15 @@
       <option name="project" value="LOCAL" />
       <updated>1736246608809</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Peut plus reprendre">
+      <option name="closed" value="true" />
+      <created>1736246744049</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1736246744049</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -260,6 +268,7 @@
     <MESSAGE value="Chargement de vidéos" />
     <MESSAGE value="Fix" />
     <MESSAGE value="Nouvelles images" />
-    <option name="LAST_COMMIT_MESSAGE" value="Nouvelles images" />
+    <MESSAGE value="Peut plus reprendre" />
+    <option name="LAST_COMMIT_MESSAGE" value="Peut plus reprendre" />
   </component>
 </project>
