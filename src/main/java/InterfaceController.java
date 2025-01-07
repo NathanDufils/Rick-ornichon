@@ -26,7 +26,7 @@ public class InterfaceController {
     private final Label statusLabel;
     private final Slider frequencySlider;
     private final TextField frequencyInput;
-    private double baseFrequency = 2000.0;
+    private double baseFrequency = 1000.0;
     private final TraitementImage traitementImage;
     private String selectedFilePath;
 
@@ -67,7 +67,6 @@ public class InterfaceController {
         frequencySlider.setMajorTickUnit(500);
         frequencySlider.setBlockIncrement(100);
 
-        // Synchroniser le curseur et l'input
         frequencySlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             baseFrequency = newValue.doubleValue();
             frequencyInput.setText(String.valueOf((int) baseFrequency));
@@ -78,38 +77,31 @@ public class InterfaceController {
 
     public Scene createInterface(Stage primaryStage) {
         // Buttons
-        Button loadImageButton = new Button("Charger un Fichier");
+        Button loadImageButton = new Button("Charger des fichiers");
         Button playButton = new Button("Lire");
         Button pauseButton = new Button("Pause");
         Button resumeButton = new Button("Reprendre");
 
-        // Top section for file loading
         VBox topBox = new VBox(loadImageButton);
         topBox.setAlignment(Pos.CENTER);
 
-        // Control buttons
         HBox controlsBox = new HBox(10, playButton, pauseButton, resumeButton);
         controlsBox.setAlignment(Pos.CENTER);
 
-        // Frequency controls
         HBox frequencyBox = new HBox(10, new Label("Fréquence : "), frequencyInput, frequencySlider);
         frequencyBox.setAlignment(Pos.CENTER);
 
-        // Combine controls and status into infoBox
         VBox infoBox = new VBox(10, controlsBox, frequencyBox, statusLabel);
         infoBox.setAlignment(Pos.CENTER);
 
-        // Combine infoBox and thumbnailBox
         VBox bottomBox = new VBox(10, thumbnailScrollPane, infoBox);
         bottomBox.setAlignment(Pos.CENTER);
 
-        // Button actions
         loadImageButton.setOnAction(e -> loadFile(primaryStage));
         playButton.setOnAction(e -> playAudio());
         pauseButton.setOnAction(e -> pauseAudio());
         resumeButton.setOnAction(e -> resumeAudio());
 
-        // Layout setup
         BorderPane root = new BorderPane();
         root.setTop(topBox);
         root.setCenter(new StackPane(imageView));
@@ -130,21 +122,36 @@ public class InterfaceController {
 
         fileChooser.setInitialDirectory(new File("src/main/resources"));
 
-        File selectedFile = fileChooser.showOpenDialog(stage);
-        if (selectedFile != null) {
-            String filePath = selectedFile.getAbsolutePath();
+        List<File> selectedFiles = fileChooser.showOpenMultipleDialog(stage);
+        if (selectedFiles != null && !selectedFiles.isEmpty()) {
+            imagePaths.clear();
+            thumbnailBox.getChildren().clear();
 
-            if (isVideoFile(filePath)) {
-                handleVideoFile(filePath);
-            } else {
-                handleImageFile(selectedFile);
+            for (File file : selectedFiles) {
+                String filePath = file.getAbsolutePath();
+
+                if (isVideoFile(filePath)) {
+                    handleVideoFile(filePath);
+                } else {
+                    imagePaths.add(filePath);
+
+                    Image thumbnail = new Image("file:" + filePath, 100, 100, true, true);
+                    ImageView thumbnailView = new ImageView(thumbnail);
+                    thumbnailBox.getChildren().add(thumbnailView);
+                }
+            }
+
+            if (!imagePaths.isEmpty()) {
+                selectedFilePath = imagePaths.get(0);
+                imageView.setImage(new Image("file:" + selectedFilePath));
+                statusLabel.setText("État : Prêt");
             }
         }
     }
 
     private boolean isVideoFile(String filePath) {
         String lowerCasePath = filePath.toLowerCase();
-        return lowerCasePath.endsWith(".mp4") || lowerCasePath.endsWith(".avi");
+        return lowerCasePath.endsWith(".mp4");
     }
 
     private void handleVideoFile(String filePath) {
@@ -163,22 +170,6 @@ public class InterfaceController {
         loadImagesFromDirectory(framesDir);
     }
 
-    private void handleImageFile(File file) {
-        imagePaths.clear();
-        thumbnailBox.getChildren().clear();
-
-        imagePaths.add(file.getAbsolutePath());
-        Image thumbnail = new Image("file:" + file.getAbsolutePath(), 100, 100, true, true);
-        ImageView thumbnailView = new ImageView(thumbnail);
-        thumbnailView.setOnMouseClicked(e -> displaySelectedImage(file.getAbsolutePath()));
-
-        thumbnailBox.getChildren().add(thumbnailView);
-
-        selectedFilePath = file.getAbsolutePath();
-        imageView.setImage(new Image("file:" + selectedFilePath));
-        statusLabel.setText("État : Prêt");
-    }
-
     private void loadImagesFromDirectory(File directory) {
         imagePaths.clear();
         thumbnailBox.getChildren().clear();
@@ -192,9 +183,6 @@ public class InterfaceController {
                 Image thumbnail = new Image("file:" + file.getAbsolutePath(), 100, 100, true, true);
                 ImageView thumbnailView = new ImageView(thumbnail);
 
-                int index = i;
-                thumbnailView.setOnMouseClicked(e -> displaySelectedImage(imagePaths.get(index)));
-
                 thumbnailBox.getChildren().add(thumbnailView);
             }
 
@@ -207,17 +195,11 @@ public class InterfaceController {
         }
     }
 
-    private void displaySelectedImage(String filePath) {
-        selectedFilePath = filePath;
-        imageView.setImage(new Image("file:" + filePath));
-        statusLabel.setText("État : Image sélectionnée");
-    }
-
     private void playAudio() {
         if (playbackThread != null && playbackThread.isAlive()) {
             return;
         }
-        cycleThroughImages();
+        restartCycleFromCurrentIndex();
     }
 
     private void pauseAudio() {
@@ -260,32 +242,28 @@ public class InterfaceController {
                 baseFrequency = newFrequency;
                 frequencySlider.setValue(baseFrequency);
             } else {
-                frequencyInput.setText(String.valueOf((int) baseFrequency)); // Rétablir la valeur précédente
+                frequencyInput.setText(String.valueOf((int) baseFrequency));
             }
         } catch (NumberFormatException e) {
-            frequencyInput.setText(String.valueOf((int) baseFrequency)); // Rétablir la valeur précédente
+            frequencyInput.setText(String.valueOf((int) baseFrequency));
         }
     }
 
-    private void cycleThroughImages() {
-        if (imagePaths.isEmpty()) {
-            statusLabel.setText("État : Aucun fichier sélectionné !");
-            return;
-        }
-
-        stopCurrentAudio();
-
+    private void restartCycleFromCurrentIndex() {
         playbackThread = new Thread(() -> {
             try {
                 while (true) {
-                    selectedFilePath = imagePaths.get(currentImageIndex);
+                    String currentFilePath;
+                    synchronized (this) {
+                        currentFilePath = imagePaths.get(currentImageIndex);
+                    }
 
                     Platform.runLater(() -> {
-                        imageView.setImage(new Image("file:" + selectedFilePath));
+                        imageView.setImage(new Image("file:" + currentFilePath));
                         statusLabel.setText("État : Lecture - Image " + (currentImageIndex + 1));
                     });
 
-                    traitementImage.transformerEtGenererAudio(selectedFilePath, baseFrequency);
+                    traitementImage.transformerEtGenererAudio(currentFilePath, baseFrequency);
                     loadAudioClip();
                     if (audioClip != null) {
                         audioClip.start();
@@ -294,12 +272,12 @@ public class InterfaceController {
                         SoundGenerator.playSineWave(baseFrequency, 100);
                     }
 
-                    currentImageIndex = (currentImageIndex + 1) % imagePaths.size();
+                    synchronized (this) {
+                        currentImageIndex = (currentImageIndex + 1) % imagePaths.size();
+                    }
                 }
             } catch (InterruptedException e) {
-                Platform.runLater(() -> {
-                    statusLabel.setText("État : Pause");
-                });
+                Platform.runLater(() -> statusLabel.setText("État : Pause"));
             }
         });
         playbackThread.start();

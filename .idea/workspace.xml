@@ -4,67 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3cbfee06-e110-495a-aede-0f904490f97a" name="Changes" comment="Chargement de plusieurs images + sélection libre + extraction frames de vidéo">
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0000.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0001.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0002.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0003.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0004.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0005.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0006.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0007.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0008.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0009.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0010.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0011.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0012.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0013.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0014.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0015.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0016.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0017.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0018.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0019.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0020.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0021.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0022.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0023.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0024.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0025.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0026.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0027.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0028.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0029.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0030.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0031.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0032.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0033.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0034.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0035.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0036.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0037.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0038.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0039.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0040.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0041.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0042.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0043.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0044.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0045.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0046.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0047.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0048.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0049.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exported_frames/frame_0050.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/SoundGenerator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/audio/click.mp3" afterDir="false" />
+    <list default="true" id="3cbfee06-e110-495a-aede-0f904490f97a" name="Changes" comment="Chargement de vidéos">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/InterfaceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/InterfaceController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/VideoFrameExtractor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/VideoFrameExtractor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/audio/click.wav" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/audio/output.wav" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/audio/output.wav" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/videos/animation_coloree.mp4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/videos/animation_noir_blanc.mp4" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/videos/animation_noir_blanc.mp4" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -217,7 +160,8 @@
       <workItem from="1733749408220" duration="2093000" />
       <workItem from="1736198142697" duration="954000" />
       <workItem from="1736199159661" duration="8881000" />
-      <workItem from="1736210012491" duration="4176000" />
+      <workItem from="1736210012491" duration="6296000" />
+      <workItem from="1736243920872" duration="294000" />
     </task>
     <task id="LOCAL-00001" summary="initialisation commit">
       <option name="closed" value="true" />
@@ -251,17 +195,37 @@
       <option name="project" value="LOCAL" />
       <updated>1736209299289</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Chargement de vidéos">
+      <option name="closed" value="true" />
+      <created>1736242252133</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1736242252133</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="initialisation commit" />
     <MESSAGE value="Lecture d'un son à partir d'une image + interactions" />
     <MESSAGE value="Chargement de plusieurs images + sélection libre + extraction frames de vidéo" />
-    <option name="LAST_COMMIT_MESSAGE" value="Chargement de plusieurs images + sélection libre + extraction frames de vidéo" />
+    <MESSAGE value="Chargement de vidéos" />
+    <option name="LAST_COMMIT_MESSAGE" value="Chargement de vidéos" />
   </component>
 </project>
