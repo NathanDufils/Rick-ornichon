@@ -4,10 +4,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -34,6 +31,7 @@ public class InterfaceController {
     private String selectedFilePath;
 
     private final HBox thumbnailBox;
+    private final ScrollPane thumbnailScrollPane;
     private final List<String> imagePaths;
     private int currentImageIndex = 0;
     private Thread playbackThread;
@@ -56,6 +54,12 @@ public class InterfaceController {
         this.thumbnailBox.setAlignment(Pos.CENTER);
         this.thumbnailBox.setPadding(new Insets(10));
         this.imagePaths = new ArrayList<>();
+
+        this.thumbnailScrollPane = new ScrollPane(thumbnailBox);
+        this.thumbnailScrollPane.setFitToHeight(true);
+        this.thumbnailScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        this.thumbnailScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        this.thumbnailScrollPane.setPrefHeight(120);
 
         // Configurer le curseur
         frequencySlider.setShowTickLabels(true);
@@ -96,7 +100,7 @@ public class InterfaceController {
         infoBox.setAlignment(Pos.CENTER);
 
         // Combine infoBox and thumbnailBox
-        VBox bottomBox = new VBox(10, thumbnailBox, infoBox);
+        VBox bottomBox = new VBox(10, thumbnailScrollPane, infoBox);
         bottomBox.setAlignment(Pos.CENTER);
 
         // Button actions
@@ -121,30 +125,75 @@ public class InterfaceController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Sélectionner des Fichiers");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg")
+                new FileChooser.ExtensionFilter("Images et Vidéos", "*.png", "*.jpg", "*.jpeg", "*.mp4", "*.avi")
         );
 
         fileChooser.setInitialDirectory(new File("src/main/resources"));
 
-        List<File> selectedFiles = fileChooser.showOpenMultipleDialog(stage);
-        if (selectedFiles != null) {
-            imagePaths.clear();
-            thumbnailBox.getChildren().clear();
+        File selectedFile = fileChooser.showOpenDialog(stage);
+        if (selectedFile != null) {
+            String filePath = selectedFile.getAbsolutePath();
 
-            for (int index = 0; index < selectedFiles.size(); index++) {
-                File file = selectedFiles.get(index);
+            if (isVideoFile(filePath)) {
+                handleVideoFile(filePath);
+            } else {
+                handleImageFile(selectedFile);
+            }
+        }
+    }
+
+    private boolean isVideoFile(String filePath) {
+        String lowerCasePath = filePath.toLowerCase();
+        return lowerCasePath.endsWith(".mp4") || lowerCasePath.endsWith(".avi");
+    }
+
+    private void handleVideoFile(String filePath) {
+        // Clear the exported_frames directory
+        File framesDir = new File("exported_frames");
+        if (framesDir.exists()) {
+            for (File file : framesDir.listFiles()) {
+                file.delete();
+            }
+        } else {
+            framesDir.mkdir();
+        }
+
+        VideoFrameExtractor.extractFrames(filePath, "exported_frames");
+
+        loadImagesFromDirectory(framesDir);
+    }
+
+    private void handleImageFile(File file) {
+        imagePaths.clear();
+        thumbnailBox.getChildren().clear();
+
+        imagePaths.add(file.getAbsolutePath());
+        Image thumbnail = new Image("file:" + file.getAbsolutePath(), 100, 100, true, true);
+        ImageView thumbnailView = new ImageView(thumbnail);
+        thumbnailView.setOnMouseClicked(e -> displaySelectedImage(file.getAbsolutePath()));
+
+        thumbnailBox.getChildren().add(thumbnailView);
+
+        selectedFilePath = file.getAbsolutePath();
+        imageView.setImage(new Image("file:" + selectedFilePath));
+        statusLabel.setText("État : Prêt");
+    }
+
+    private void loadImagesFromDirectory(File directory) {
+        imagePaths.clear();
+        thumbnailBox.getChildren().clear();
+
+        File[] files = directory.listFiles((dir, name) -> name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg"));
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                File file = files[i];
                 imagePaths.add(file.getAbsolutePath());
 
                 Image thumbnail = new Image("file:" + file.getAbsolutePath(), 100, 100, true, true);
                 ImageView thumbnailView = new ImageView(thumbnail);
 
-                int finalIndex = index;
-                thumbnailView.setOnMouseClicked(e -> {
-                    currentImageIndex = finalIndex;
-                    selectedFilePath = imagePaths.get(currentImageIndex);
-                    imageView.setImage(new Image("file:" + selectedFilePath));
-                    statusLabel.setText("État : Image sélectionnée");
-                });
+                int index = i;
+                thumbnailView.setOnMouseClicked(e -> displaySelectedImage(imagePaths.get(index)));
 
                 thumbnailBox.getChildren().add(thumbnailView);
             }
@@ -156,6 +205,12 @@ public class InterfaceController {
                 statusLabel.setText("État : Prêt");
             }
         }
+    }
+
+    private void displaySelectedImage(String filePath) {
+        selectedFilePath = filePath;
+        imageView.setImage(new Image("file:" + filePath));
+        statusLabel.setText("État : Image sélectionnée");
     }
 
     private void playAudio() {
@@ -236,6 +291,7 @@ public class InterfaceController {
                         audioClip.start();
                         audioClip.loop(2);
                         Thread.sleep(3000);
+                        SoundGenerator.playSineWave(baseFrequency, 100);
                     }
 
                     currentImageIndex = (currentImageIndex + 1) % imagePaths.size();
